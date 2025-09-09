@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ZombieParty.Models;
-using ZombieParty.Models.Data;
-
+using ZombieParty.Models.Data; 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

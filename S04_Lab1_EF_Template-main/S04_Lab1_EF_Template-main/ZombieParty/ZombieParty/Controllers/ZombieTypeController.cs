@@ -1,28 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ZombieParty.Models;
+using ZombieParty.Models.Data;
 using ZombieParty.ViewModels;
+
 
 namespace ZombieParty.Controllers
 {
     public class ZombieTypeController : Controller
     {
-        private BaseDonnees _baseDonnees { get; set; }
+        private ZombiePartyDbContext _baseDonnees { get; set; }
 
-        public ZombieTypeController(BaseDonnees baseDonnees)
+        public ZombieTypeController(ZombiePartyDbContext baseDonnees)
         {
             _baseDonnees = baseDonnees;
         }
 
         public IActionResult Index()
         {
-            List<ZombieType> zombieTypesList = _baseDonnees.ZombieTypes.ToList();
+            List<ZombieType> zombieTypesList = _baseDonnees.zombieType.ToList();
 
             return View(zombieTypesList);
         }
 
         public IActionResult Details(int id)
         {
-            var zombies = _baseDonnees.Zombies.Where(z => z.ZombieTypeId == id);
+            var zombies = _baseDonnees.Zombie.Where(z => z.ZombieTypeId == id);
 
             ZombieTypeVM zombieTypeVM = new()
             {
@@ -32,7 +35,7 @@ namespace ZombieParty.Controllers
                 PointsAverage = zombies.Average(p => p.Point)
             };
 
-            zombieTypeVM.ZombieType = _baseDonnees.ZombieTypes.FirstOrDefault(zt => zt.Id == id);
+            zombieTypeVM.ZombieType = _baseDonnees.zombieType.FirstOrDefault(zt => zt.Id == id);
             return View(zombieTypeVM);
         }
 
@@ -45,12 +48,13 @@ namespace ZombieParty.Controllers
 
         //POST
         [HttpPost]
+     
         public IActionResult Create(Models.ZombieType zombieType)
         {
             if (ModelState.IsValid)
             {
                 // Ajouter à la BD
-                _baseDonnees.ZombieTypes.Add(zombieType);
+                _baseDonnees.zombieType.Add(zombieType);
                 TempData["Success"] = $"{zombieType.TypeName} zombie type added";
                 return this.RedirectToAction("Index");
             }
